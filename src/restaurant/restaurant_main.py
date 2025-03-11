@@ -4,8 +4,7 @@ from restaurant.restaurant_details import zomato_restaurant_countries_events_to_
 from restaurant.restaurant_events import extract_restaurant_events_by_mm_yyyy
 from restaurant.restaurant_analysis import rating_text_thresholds_analyser
 from utils.cli_funcs import prompt_user_yes_no
-#load env
-load_dotenv()
+#constants
 RESTAURANT_DETAILS_MAP = {"id":"restaurant_id",
                             "name":"restaurant_name",
                             "Country":"country",
@@ -27,11 +26,13 @@ RESTAURANTS_EVENT_MAP = {"event_id":"event_id",
 RATING_TEXT_LIST = ['Poor','Average', 'Good', 'Very Good', 'Excellent']
 MIN_MAX_RATING = (0,5) #assume we have this info
 DATA_FOLDER_DIR = os.getenv("DATA_FOLDER_DIR")
-RESTAURANT_JSON_URL = os.getenv("RESTAURANT_JSON_URL")
-RESTAURANT_DETAILS_FILENAME = os.getenv("RESTAURANT_DETAILS_FILENAME")
-COUNTRY_CODE_FILENAME = os.getenv("COUNTRY_CODE_FILENAME")
-RESTAURANT_EVENTS_FILENAME=os.getenv("RESTAURANT_EVENTS_FILENAME")
+DATA_FOLDER_DIR = "../data"
+RESTAURANT_JSON_URL="https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
+RESTAURANT_DETAILS_FILENAME = "restaurant_details.csv"
+RESTAURANT_EVENTS_FILENAME = "restaurant_events.csv"
+COUNTRY_CODE_FILENAME = "Country-Code.xlsx"
 EVENT_MMYYY = "04_2019"
+
 if __name__ == "__main__":
     #retrieving restaurants data and filtering columns
     restaurants_countries_expanded_df = zomato_restaurant_countries_events_to_df(RESTAURANT_JSON_URL,\
