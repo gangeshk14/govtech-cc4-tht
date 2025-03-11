@@ -76,9 +76,8 @@ def search_carparks_data_from_address(carparks_data_merged_df, address):
 
     return json.dumps(result, indent=4)
 
-def suggest_addresses(carparks_data_merged_df, address):
+def suggest_addresses(addresses, address):
     """Find the best matching address and return carpark details."""
-    addresses = carparks_data_merged_df["address"]
     
     while True:
         # Get top 5 closest matches
@@ -88,10 +87,9 @@ def suggest_addresses(carparks_data_merged_df, address):
         table = Table(title="Did you mean one of these addresses?", show_header=True, header_style="bold magenta")
         table.add_column("Index", justify="center")
         table.add_column("Address", justify="left")
-        table.add_column("Match Score", justify="center")
 
         for i, (match, score, idx) in enumerate(matches, 1):
-            table.add_row(str(i), match, f"{score}%")
+            table.add_row(str(i), match)
 
         console.print(table)
 
