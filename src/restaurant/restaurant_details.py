@@ -1,11 +1,14 @@
 import json
 import pandas as pd
 from typing import List, Dict
+from rich.console import Console
 from utils.extract_rename_save_csv import extract_rename_save_csv
-from utils.load_data import load_file_to_df
+from utils.load_data_to_df import load_file_to_df
 from utils.merge_data import merge_data
 from utils.load_url_response import load_json_url_response
 import numpy as np
+console = Console()
+# pd.options.mode.chained_assignment = None
 
 def zomato_api_response_to_df(responses: List[Dict]) -> pd.DataFrame:
     """
@@ -55,15 +58,13 @@ def zomato_restaurant_countries_events_to_df(RESTAURANT_JSON_URL:str,DATA_FOLDER
     restaurants_df = zomato_api_response_to_df(json_responses)
 
     #basic validation and data summary
-    print(restaurants_df.info())
+    # print(restaurants_df.info())
 
-    #fill empty fields with NA
-    restaurants_df.fillna('NA',inplace=True)
+    #fill empty fields with nan
+    restaurants_df.fillna(np.nan,inplace=True)
 
     #load countries
     countries_df = load_file_to_df(f"{DATA_FOLDER_DIR}/{COUNTRY_CODE_FILENAME}")
-    print(countries_df.info())
-
 
     #merge countries_df and restaurants_df
     restaurants_countries_df,merge_logs = merge_data(restaurants_df,countries_df,"location.country_id","Country Code","inner")
@@ -75,11 +76,12 @@ def zomato_restaurant_countries_events_to_df(RESTAURANT_JSON_URL:str,DATA_FOLDER
     # print(filtered_restaurants_countries_expanded_df['zomato_events'][0])
     return restaurants_countries_expanded_df
 
-def zomato_restaurant_details_to_csv(restaurant_details_df:pd.DataFrame,RESTAURANT_DETAILS_MAP:Dict,RESTAURANT_DETAILS_FILENAME:str,DATA_FOLDER_DIR:str):
+def zomato_restaurant_details_to_csv(restaurant_details_df_main:pd.DataFrame,RESTAURANT_DETAILS_MAP:Dict,RESTAURANT_DETAILS_FILENAME:str,DATA_FOLDER_DIR:str):
     """
     Fetches dataframe that contains restaurant and country details with expanded events field
 
     Args:
+        restaurant_details_df_main (pd.DataFrame)
         RESTAURANT_JSON_URL (str): The URL to fetch restaurant data from the Zomato API.
         DATA_FOLDER_DIR (str): The directory containing the 'Country-Code.xlsx' file.
 
@@ -105,17 +107,18 @@ def zomato_restaurant_details_to_csv(restaurant_details_df:pd.DataFrame,RESTAURA
                 if date_str:
                     pd.to_datetime(date_str).date() #Check if it can be converted.
                     return pd.to_datetime(date_str).date()
-            return 'NA'
+            return np.nan
         except (ValueError, TypeError): 
-            return 'NA'
+            return np.nan
         except:
-            return 'NA'
+            return np.nan
+    #create copy
+    restaurant_details_df = restaurant_details_df_main.copy()
     try:
         #apply above function extract start date of event
         restaurant_details_df['zomato_events'] = restaurant_details_df['zomato_events'].apply(extract_and_convert_date)
         #convert user_aggregate_rating to float type
-        restaurant_details_df["user_rating.aggregate_rating"] = restaurant_details_df["user_rating.aggregate_rating"].replace("NA", np.nan).astype(float)
-
+        restaurant_details_df["user_rating.aggregate_rating"] = restaurant_details_df["user_rating.aggregate_rating"].astype(float)
         #extract and save result
         extract_rename_save_csv(restaurant_details_df,DATA_FOLDER_DIR,RESTAURANT_DETAILS_FILENAME,RESTAURANT_DETAILS_MAP)
     except KeyError as e:
