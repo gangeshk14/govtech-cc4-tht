@@ -71,6 +71,7 @@ project_root/
 6. run main module
   ```sh
   python -m main
+  ```
 7. run tests
   ```sh
   pytest
