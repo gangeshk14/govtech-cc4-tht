@@ -1,3 +1,5 @@
 **/.DS_Store
 .gtvenv
 .env
+**/__pycache__/
+.venv

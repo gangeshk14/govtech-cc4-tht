@@ -1,0 +1,12 @@
+pandas
+numpy
+rich
+fuzzywuzzy
+requests
+typing
+seaborn
+matplotlib
+openpyxl
+python-Levenshtein
+pytest
+requests_mock

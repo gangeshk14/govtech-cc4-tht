@@ -1,9 +1,26 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from typing import List
+def rating_text_thresholds_analyser(restaurants_countries_expanded_df:pd.DataFrame,RATING_TEXT_LIST:List[str],MIN_MAX_RATING:tuple):
+    """
+    Analyzes restaurant rating data and computes dynamic rating thresholds for different rating texts.
 
-def rating_text_thresholds_analyser(restaurants_countries_expanded_df,RATING_TEXT_LIST,MIN_MAX_RATING):
+    This function processes the restaurant review data by filtering relevant columns, cleaning missing values,
+    visualizing the distribution of aggregate ratings, and plotting relationships between aggregate ratings, votes,
+    and fake reviews. It also computes dynamic rating thresholds based on the minimum and maximum values of aggregate ratings
+    for each rating text.
 
+    Args:
+        restaurants_countries_expanded_df (pd.DataFrame): A DataFrame containing the restaurant review data, with columns for
+                                                        aggregate ratings, rating texts, votes, and fake reviews.
+        RATING_TEXT_LIST (List[str]): A list of valid rating texts to filter the dataset (e.g., ['Poor', 'Average', 'Good', 'Very Good', 'Excellent']).
+        MIN_MAX_RATING (tuple): A tuple containing the minimum and maximum rating values (e.g., (0, 5)) used to define rating ranges.
+
+    Returns:
+        dict: A dictionary containing the computed dynamic rating thresholds for each rating text. Each entry in the dictionary 
+            maps a rating text to a tuple of (start_value, end_value), which defines the range for that rating text.
+    """
     #step 1: filtering columns relevant to reviews
     restaurants_reviews_data_df = restaurants_countries_expanded_df[[
         'user_rating.aggregate_rating',
@@ -20,7 +37,7 @@ def rating_text_thresholds_analyser(restaurants_countries_expanded_df,RATING_TEX
     for col in restaurants_reviews_data_df.columns:
         print(f"{col}: {restaurants_reviews_data_df[col].apply(type).value_counts().to_dict()}")
     print(restaurants_reviews_data_df['user_rating.rating_text'].unique())
-    #step 3.1 remove not rated restaurants
+    #step 3.1  only keep relevant text rating restaurants
     restaurants_reviews_data_df.drop(restaurants_reviews_data_df[~restaurants_reviews_data_df['user_rating.rating_text'].isin(RATING_TEXT_LIST)].index, inplace=True)
 
     #step 4 convert user_rating.aggregate_rating to float

@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from rich.console import Console
 from rich.prompt import Prompt
 import re
@@ -12,8 +11,6 @@ from restaurant.restaurant_details import zomato_restaurant_countries_events_to_
 from restaurant.restaurant_events import extract_restaurant_events_by_mm_yyyy
 from restaurant.restaurant_analysis import rating_text_thresholds_analyser
 console = Console()
-#load env
-load_dotenv()
 
 #restaurant scenario constants
 RESTAURANT_DETAILS_MAP = {"id":"restaurant_id",

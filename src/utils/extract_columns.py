@@ -17,6 +17,8 @@ def extract_columns(df: pd.DataFrame, extract_cols: List[str]) -> pd.DataFrame:
         UserWarning: If one or more requested columns have duplicate names in the DataFrame.
     """
     #check if columns with the same name exist, then check if user has requested the return of any of those columns
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("Error: The provided input is not a Pandas DataFrame.") from None
     if any(df.columns.duplicated()):
         duplicated_cols = set(df.columns[df.columns.duplicated(keep=False)].tolist())
         if any(col in duplicated_cols for col in extract_cols):

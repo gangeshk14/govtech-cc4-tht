@@ -5,7 +5,7 @@ from rich.table import Table
 from fuzzywuzzy import process
 from rich.console import Console
 console = Console()
-def search_carparks_data_from_cp_num(carparks_data_merged_df, carpark_number):
+def search_carparks_data_from_cp_num(carparks_data_merged_df:pd.DataFrame, carpark_number:str):
     """
     Retrieves information for a given carpark number and returns it as a JSON object.
 
@@ -40,16 +40,16 @@ def search_carparks_data_from_cp_num(carparks_data_merged_df, carpark_number):
         result["lots_available"][lot_type] = row['lots_available']
 
     return json.dumps(result, indent=4)
-def search_carparks_data_from_address(carparks_data_merged_df, address):
+def search_carparks_data_from_address(carparks_data_merged_df:pd.DataFrame, address:str):
     """
-    Retrieves information for a given carpark number and returns it as a JSON object.
+    Retrieves information for a given address and returns it as a JSON object.
 
     Args:
         df (pd.DataFrame): The DataFrame containing carpark information.
-        carpark_number (str): The carpark number to retrieve information for.
+        address (str): The address to retrieve information for.
 
     Returns:
-        str: A JSON string containing the carpark information, or None if the carpark number is not found.
+        str: A JSON string containing the carpark information, or None if the address is not found.
     """
     carpark_data = carparks_data_merged_df[carparks_data_merged_df['address'] == address]
     if carpark_data.empty:  
@@ -77,7 +77,20 @@ def search_carparks_data_from_address(carparks_data_merged_df, address):
     return json.dumps(result, indent=4)
 
 def suggest_addresses(addresses, address):
-    """Find the best matching address and return carpark details."""
+    """
+    Suggests the best matching address from a list of addresses based on a given input address.
+
+    This function uses fuzzy matching to find the top 5 closest matches from a list of addresses. 
+    The user is then prompted to select the correct address or enter a new query. If the user chooses 
+    a valid match, the function returns the selected address. The user can also exit the process by typing 'exit'.
+
+    Args:
+        addresses (list of str): A list of available addresses to match against.
+        address (str): The address input by the user to search for matches.
+
+    Returns:
+        str or None: The selected address if a valid match is found, or None if the user exits the search.
+    """
     
     while True:
         # Get top 5 closest matches
